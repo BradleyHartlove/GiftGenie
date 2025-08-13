@@ -6,6 +6,10 @@ import {
 } from './firebase/auth';
 import SessionContext, { type Session } from './SessionContext';
 import type { User } from 'firebase/auth';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline';
+import "./App.css";
+
 export default function App() {
   const [session, setSession] = React.useState<Session | null>(null);
   const [loading, setLoading] = React.useState(true);
@@ -39,13 +43,26 @@ export default function App() {
     return () => unsubscribe();
   }, []);
 
+
+  const lightTheme = createTheme({
+    palette: {
+      mode: 'light',
+      background: {
+        default: '#f5f5f5', // Offwhite/light grey
+      },
+    },
+  });
+
   return (
     <ReactRouterAppProvider
       session={session}
       // authentication={AUTHENTICATION}
     >
       <SessionContext.Provider value={sessionContextValue}>
-        <Outlet />
+        <ThemeProvider theme={lightTheme}>
+          <CssBaseline />
+          <Outlet />
+        </ThemeProvider>
       </SessionContext.Provider>
     </ReactRouterAppProvider>
   );

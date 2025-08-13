@@ -7,6 +7,7 @@ import {
 import { firebaseAuth } from './firebaseConfig';
 
 
+export default firebaseAuth;
 
 // Sign in with email and password
 export async function signInWithCredentials(email: string, password: string) {

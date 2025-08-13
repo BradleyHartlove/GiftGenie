@@ -16,7 +16,7 @@ export default function SignIn() {
   }
 
   if (session) {
-    return <Navigate to="/" />;
+    return <Navigate to="/home" />;
   }
 
   return (
@@ -48,7 +48,7 @@ export default function SignIn() {
               },
             };
             setSession(userSession);
-            navigate(callbackUrl || '/', { replace: true });
+            navigate(callbackUrl || '/home', { replace: true });
             return {};
           }
           return { error: result?.error || 'Failed to sign in' };
