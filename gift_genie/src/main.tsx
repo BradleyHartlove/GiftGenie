@@ -5,6 +5,7 @@ import App from './App';
 import Layout from './layouts/layout';
 import HomePage from './pages/home';
 import SignInPage from './pages/signIn';
+import SignUpPage from './pages/signUp';
 
 const router = createBrowserRouter([
   {
@@ -23,6 +24,10 @@ const router = createBrowserRouter([
       {
         path: '/sign-in',
         Component: SignInPage,
+      },
+      {
+        path: '/sign-up',
+        Component: SignUpPage,
       },
     ],
   },

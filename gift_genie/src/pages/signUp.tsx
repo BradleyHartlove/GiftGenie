@@ -1,20 +1,18 @@
 'use client';
-// import { SignInPage } from '@toolpad/core/SignInPage';
 import LinearProgress from '@mui/material/LinearProgress';
 import { Navigate, useNavigate } from 'react-router';
 import { useSession, type Session } from '../SessionContext';
 import {
-  signInWithCredentials,
+  signUpWithCredentials, // <-- Make sure this exists in your firebase/auth
 } from '../firebase/auth';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
-// import CardActions from '@mui/material/CardActions';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import * as React from 'react';
 
-export default function SignIn() {
+export default function SignUpPage() {
   const { session, setSession, loading } = useSession();
   const navigate = useNavigate();
   const [error, setError] = React.useState<string | null>(null);
@@ -33,7 +31,7 @@ export default function SignIn() {
         <Card sx={{ width: 400, boxShadow: 5 }}>
           <CardContent>
             <Typography gutterBottom variant="h5" component="div" align="center">
-              Sign In
+              Sign Up
             </Typography>
             <form
               onSubmit={async (event) => {
@@ -41,26 +39,32 @@ export default function SignIn() {
                 setError(null);
                 const formData = new FormData(event.currentTarget);
                 const email = formData.get('email') as string;
+                const username = formData.get('username') as string;
                 const password = formData.get('password') as string;
+                const verifyPassword = formData.get('verifyPassword') as string;
 
-                if (!email || !password) {
-                  setError('Email and password are required');
+                if (!email || !username || !password || !verifyPassword) {
+                  setError('All fields are required');
+                  return;
+                }
+                if (password !== verifyPassword) {
+                  setError('Passwords do not match');
                   return;
                 }
 
                 try {
-                  const result = await signInWithCredentials(email, password);
+                  const result = await signUpWithCredentials(email, password, username);
                   if (result?.success && result?.user) {
                     const userSession: Session = {
                       user: {
-                        name: result.user.displayName || '',
-                        email: result.user.email || '',
+                        name: result.user.displayName || username,
+                        email: result.user.email || email
                       },
                     };
                     setSession(userSession);
                     navigate('/home', { replace: true });
                   } else {
-                    setError(result?.error || 'Failed to sign in');
+                    setError(result?.error || 'Failed to sign up');
                   }
                 } catch (error) {
                   setError(error instanceof Error ? error.message : 'An error occurred');
@@ -69,7 +73,9 @@ export default function SignIn() {
             >
               <div className="flex flex-col gap-4 mt-4">
                 <TextField name="email" label="Email" variant="outlined" type="email" fullWidth required />
+                <TextField name="username" label="Username" variant="outlined" type="text" fullWidth required />
                 <TextField name="password" label="Password" variant="outlined" type="password" fullWidth required />
+                <TextField name="verifyPassword" label="Verify Password" variant="outlined" type="password" fullWidth required />
               </div>
               {error && (
                 <Typography color="error" variant="body2" align="center" sx={{ mt: 1 }}>
@@ -83,11 +89,11 @@ export default function SignIn() {
                 fullWidth
                 sx={{ mt: 2 }}
               >
-                Sign In
+                Sign Up
               </Button>
               <div>
                 <Typography variant="body2" align="center" sx={{ mt: 2 }}>
-                  Don't have an account? <Button color="primary" onClick={() => navigate('/sign-up')}>Sign Up</Button>
+                  Already have an account? <Button color="primary" onClick={() => navigate('/sign-in')}>Sign In</Button>
                 </Typography>
               </div>
             </form>

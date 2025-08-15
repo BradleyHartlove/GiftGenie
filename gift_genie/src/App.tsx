@@ -30,8 +30,7 @@ export default function App() {
         setSession({
           user: {
             name: user.displayName || '',
-            email: user.email || '',
-            image: user.photoURL || '',
+            email: user.email || ''
           },
         });
       } else {
@@ -61,7 +60,9 @@ export default function App() {
       <SessionContext.Provider value={sessionContextValue}>
         <ThemeProvider theme={lightTheme}>
           <CssBaseline />
-          <Outlet />
+          <div className="min-h-screen w-screen overflow-auto">
+            <Outlet />
+          </div>
         </ThemeProvider>
       </SessionContext.Provider>
     </ReactRouterAppProvider>

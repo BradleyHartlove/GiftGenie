@@ -3,6 +3,8 @@ import {
   browserSessionPersistence,
   signInWithEmailAndPassword,
   signOut,
+  createUserWithEmailAndPassword,
+  updateProfile,
 } from 'firebase/auth';
 import { firebaseAuth } from './firebaseConfig';
 
@@ -50,3 +52,14 @@ export const firebaseSignOut = async () => {
 export const onAuthStateChanged = (callback: (user: any) => void) => {
   return firebaseAuth.onAuthStateChanged(callback);
 };
+
+// Sign up with email and password
+export async function signUpWithCredentials(email: string, password: string, username: string) {
+  try {
+    const userCredential = await createUserWithEmailAndPassword(firebaseAuth, email, password);
+    await updateProfile(userCredential.user, { displayName: username });
+    return { success: true, user: userCredential.user };
+  } catch (error: any) {
+    return { success: false, error: error.message };
+  }
+}
