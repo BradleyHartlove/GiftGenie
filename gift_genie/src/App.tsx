@@ -29,6 +29,7 @@ export default function App() {
       if (user) {
         setSession({
           user: {
+            id: user.uid,
             name: user.displayName || '',
             email: user.email || ''
           },
@@ -55,7 +56,7 @@ export default function App() {
   return (
     <ReactRouterAppProvider
       session={session}
-      // authentication={AUTHENTICATION}
+    // authentication={AUTHENTICATION}
     >
       <SessionContext.Provider value={sessionContextValue}>
         <ThemeProvider theme={lightTheme}>

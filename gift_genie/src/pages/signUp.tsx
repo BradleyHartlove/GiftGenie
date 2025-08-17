@@ -3,7 +3,7 @@ import LinearProgress from '@mui/material/LinearProgress';
 import { Navigate, useNavigate } from 'react-router';
 import { useSession, type Session } from '../SessionContext';
 import {
-  signUpWithCredentials, // <-- Make sure this exists in your firebase/auth
+  signUpWithCredentials,
 } from '../firebase/auth';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
@@ -11,6 +11,8 @@ import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import * as React from 'react';
+import { setDoc, doc } from "firebase/firestore";
+import db from '../firebase/database';
 
 export default function SignUpPage() {
   const { session, setSession, loading } = useSession();
@@ -23,6 +25,18 @@ export default function SignUpPage() {
 
   if (session) {
     return <Navigate to="/home" />;
+  }
+
+  async function createUserInFirestore(uid: string, username: string) {
+    try {
+      await setDoc(doc(db, "users", uid), {
+        username: username,
+        uid: uid
+      });
+      console.log("Document written with ID: ", uid);
+    } catch (e) {
+      console.error("Error adding document: ", e);
+    }
   }
 
   return (
@@ -57,11 +71,16 @@ export default function SignUpPage() {
                   if (result?.success && result?.user) {
                     const userSession: Session = {
                       user: {
+                        id: result.user.uid,
                         name: result.user.displayName || username,
                         email: result.user.email || email
                       },
                     };
                     setSession(userSession);
+
+                    // Create user in firebase cloud firestore
+                    await createUserInFirestore(result.user.uid, username);
+
                     navigate('/home', { replace: true });
                   } else {
                     setError(result?.error || 'Failed to sign up');

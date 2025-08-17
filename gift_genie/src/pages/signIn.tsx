@@ -53,6 +53,7 @@ export default function SignIn() {
                   if (result?.success && result?.user) {
                     const userSession: Session = {
                       user: {
+                        id: result.user.uid,
                         name: result.user.displayName || '',
                         email: result.user.email || '',
                       },

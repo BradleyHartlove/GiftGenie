@@ -2,6 +2,7 @@ import * as React from 'react';
 
 export interface Session {
   user: {
+    id?: string;
     name?: string;
     email?: string;
   };
@@ -15,7 +16,7 @@ interface SessionContextType {
 
 const SessionContext = React.createContext<SessionContextType>({
   session: null,
-  setSession: () => {},
+  setSession: () => { },
   loading: true,
 });
 
